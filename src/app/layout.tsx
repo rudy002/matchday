@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Heebo } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 
@@ -16,6 +16,14 @@ const body = Heebo({
   variable: "--font-body",
   subsets: ["latin", "latin-ext", "hebrew"],
 });
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f2f7f9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a141c" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: messages.app.name,

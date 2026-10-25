@@ -32,7 +32,7 @@ export function ResultsShare({ event, summary }: ResultsShareProps) {
     <section className="space-y-3">
       <h2 className="text-xl font-bold">{text.title}</h2>
 
-      <pre className="rounded-lg bg-muted p-3 text-sm whitespace-pre-wrap">
+      <pre className="rounded-lg bg-muted p-3 text-sm [overflow-wrap:anywhere] whitespace-pre-wrap">
         {shareText}
       </pre>
 

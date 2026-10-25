@@ -24,12 +24,12 @@ export function SlotDetail({ slot, participants, children }: SlotDetailProps) {
       {free.length === 0 ? (
         <p className="text-sm text-muted-foreground">{text.noneFree}</p>
       ) : (
-        <p className="text-sm">
+        <p className="text-sm [overflow-wrap:anywhere]">
           <span className="font-medium">{text.free} :</span> {free.join(", ")}
         </p>
       )}
       {busy.length > 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm [overflow-wrap:anywhere] text-muted-foreground">
           <span className="font-medium">{text.busy} :</span> {busy.join(", ")}
         </p>
       ) : null}

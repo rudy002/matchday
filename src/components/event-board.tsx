@@ -192,6 +192,7 @@ export function EventBoard({
                 </p>
                 <Button
                   type="button"
+                  className="h-11 px-4 text-base"
                   disabled={confirming}
                   onClick={() => confirmSlot(focused)}
                 >

@@ -57,10 +57,10 @@ export function BestSlots({
                 onClick={() => onPick(slot.start)}
                 className="block w-full space-y-1 rounded-md text-left focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
-                <span className="block font-heading text-lg font-bold">
+                <span className="block font-heading text-lg font-bold [overflow-wrap:anywhere]">
                   {describeWindow(slot.start, durationMinutes)}
                 </span>
-                <span className="block text-sm">
+                <span className="block text-sm [overflow-wrap:anywhere]">
                   {slot.count} {text.of} {slot.total} {text.freeOf} :{" "}
                   {slot.names.join(", ")}
                 </span>
@@ -68,6 +68,7 @@ export function BestSlots({
               {onConfirm ? (
                 <Button
                   type="button"
+                  className="h-11 px-4 text-base"
                   variant={index === 0 ? "secondary" : "outline"}
                   disabled={confirming}
                   onClick={() => onConfirm(slot.start)}

@@ -46,7 +46,7 @@ export function ConfirmedBanner({
         />
         <div>
           <p className="text-sm text-muted-foreground">{text.banner}</p>
-          <p className="font-heading text-xl font-bold">
+          <p className="font-heading text-xl font-bold [overflow-wrap:anywhere]">
             {describeWindow(slot, event.durationMinutes)}
           </p>
         </div>

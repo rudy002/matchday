@@ -10,7 +10,9 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
         {messages.errors.genericTitle}
       </h1>
       <p className="text-muted-foreground">{messages.errors.genericText}</p>
-      <Button onClick={reset}>{messages.errors.retry}</Button>
+      <Button className="h-11 px-4 text-base" onClick={reset}>
+        {messages.errors.retry}
+      </Button>
     </main>
   );
 }

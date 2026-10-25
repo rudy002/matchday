@@ -30,10 +30,13 @@ export function weekLabel(week: Week): string {
   return `${formatDay(first)} – ${formatDay(last)}`;
 }
 
+export function describeDay(date: string): string {
+  return `${calendar.daysLong[getDay(parseISO(date))]} ${formatDay(date)}`;
+}
+
 export function describeSlot(slotKey: string): string {
   const [date, time] = slotKey.split("T");
-  const weekday = calendar.daysLong[getDay(parseISO(date))];
-  return `${weekday} ${formatDay(date)} ${time}`;
+  return `${describeDay(date)} ${time}`;
 }
 
 export function windowParts(

@@ -22,6 +22,7 @@ export function WeekNav({ weeks, index, onChange }: WeekNavProps) {
         type="button"
         variant="outline"
         size="icon"
+        className="size-11"
         aria-label={text.previousWeek}
         disabled={index === 0}
         onClick={() => onChange(index - 1)}
@@ -33,6 +34,7 @@ export function WeekNav({ weeks, index, onChange }: WeekNavProps) {
         type="button"
         variant="outline"
         size="icon"
+        className="size-11"
         aria-label={text.nextWeek}
         disabled={index === weeks.length - 1}
         onClick={() => onChange(index + 1)}

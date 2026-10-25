@@ -7,7 +7,7 @@ import { hasControlCharacters } from "@/lib/text";
 
 const DEFAULT_TIMEZONE = "Asia/Jerusalem";
 
-const MAX_RANGE_DAYS = 31;
+export const MAX_RANGE_DAYS = 31;
 const MIN_DURATION_MINUTES = 30;
 const MAX_DURATION_MINUTES = 8 * 60;
 

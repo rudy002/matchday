@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 
 import { createEventAction } from "@/app/actions/create-event";
+import { DateRangePicker } from "@/components/date-range-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -86,37 +87,15 @@ export function CreateEventForm() {
         )}
       </Field>
 
-      <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">{text.dates}</legend>
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            name="startDate"
-            label={text.startDate}
-            error={errors.startDate}
-          >
-            {(props) => (
-              <Input
-                {...props}
-                type="date"
-                className={controlClass}
-                defaultValue={values.startDate}
-                required
-              />
-            )}
-          </Field>
-          <Field name="endDate" label={text.endDate} error={errors.endDate}>
-            {(props) => (
-              <Input
-                {...props}
-                type="date"
-                className={controlClass}
-                defaultValue={values.endDate}
-                required
-              />
-            )}
-          </Field>
-        </div>
-      </fieldset>
+      <DateRangePicker
+        defaultStart={values.startDate}
+        defaultEnd={values.endDate}
+        errors={
+          [
+            ...new Set([errors.startDate, errors.endDate].filter(Boolean)),
+          ] as string[]
+        }
+      />
 
       <fieldset className="space-y-3">
         <legend className="text-sm font-medium">{text.hours}</legend>

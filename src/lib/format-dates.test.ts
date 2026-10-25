@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  describeDay,
   describeSlot,
   describeWindow,
   windowParts,
@@ -95,5 +96,11 @@ describe("windowParts", () => {
       day: "Mercredi 11 nov.",
       time: "18:30 – 20:00",
     });
+  });
+});
+
+describe("describeDay", () => {
+  it("gives the weekday and date for screen readers", () => {
+    expect(describeDay("2026-11-08")).toBe("Dimanche 8 nov.");
   });
 });

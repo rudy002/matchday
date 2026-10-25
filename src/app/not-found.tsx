@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { messages } from "@/lib/messages";
+import { cn } from "@/lib/utils";
 
 export default function NotFound() {
   return (
@@ -10,7 +11,7 @@ export default function NotFound() {
         {messages.errors.notFoundTitle}
       </h1>
       <p className="text-muted-foreground">{messages.errors.notFoundText}</p>
-      <Link href="/" className={buttonVariants()}>
+      <Link href="/" className={cn(buttonVariants(), "h-11 px-4 text-base")}>
         {messages.errors.backHome}
       </Link>
     </main>
