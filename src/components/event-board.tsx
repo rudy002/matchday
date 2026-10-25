@@ -184,23 +184,25 @@ export function EventBoard({
             }}
           />
           <p className="text-sm text-muted-foreground">{text.legend}</p>
-          <SlotDetail slot={focused} participants={participants}>
-            {canConfirmFocused ? (
-              <div className="space-y-2 pt-1">
-                <p className="text-sm text-muted-foreground">
-                  {describeWindow(focused, event.durationMinutes)}
-                </p>
-                <Button
-                  type="button"
-                  className="h-11 px-4 text-base"
-                  disabled={confirming}
-                  onClick={() => confirmSlot(focused)}
-                >
-                  {confirming ? confirmText.confirming : confirmText.button}
-                </Button>
-              </div>
-            ) : null}
-          </SlotDetail>
+          <div className="min-h-28">
+            <SlotDetail slot={focused} participants={participants}>
+              {canConfirmFocused ? (
+                <div className="space-y-2 pt-1">
+                  <p className="text-sm text-muted-foreground">
+                    {describeWindow(focused, event.durationMinutes)}
+                  </p>
+                  <Button
+                    type="button"
+                    className="h-11 px-4 text-base"
+                    disabled={confirming}
+                    onClick={() => confirmSlot(focused)}
+                  >
+                    {confirming ? confirmText.confirming : confirmText.button}
+                  </Button>
+                </div>
+              ) : null}
+            </SlotDetail>
+          </div>
         </section>
       ) : null}
 

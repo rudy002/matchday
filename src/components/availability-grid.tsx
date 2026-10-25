@@ -152,7 +152,7 @@ export function AvailabilityGrid({
                     backgroundColor: `color-mix(in oklab, var(--primary) ${Math.round(share * 100)}%, var(--muted))`,
                   }}
                   className={cn(
-                    "h-10 rounded-md text-xs font-bold tabular-nums transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+                    "h-10 rounded-md text-xs font-bold tabular-nums focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
                     share >= 0.5
                       ? "text-primary-foreground"
                       : "text-foreground",
@@ -173,7 +173,7 @@ export function AvailabilityGrid({
                 aria-pressed={on}
                 aria-label={`${describeSlot(key)} : ${on ? text.free : text.notFree}`}
                 className={cn(
-                  "h-10 rounded-md transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+                  "h-10 rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
                   on ? "bg-primary" : "bg-muted hover:bg-accent",
                 )}
               />

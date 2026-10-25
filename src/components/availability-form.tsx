@@ -135,7 +135,7 @@ export function AvailabilityForm({
       </section>
 
       <div className="sticky bottom-0 -mx-4 space-y-2 border-t bg-background/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
-        <p role="status" className="min-h-5 text-sm">
+        <p role="status" className="min-h-10 text-sm leading-5">
           {status.kind === "saved" ? (
             <span className="text-primary">{text.saved}</span>
           ) : null}
