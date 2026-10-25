@@ -136,6 +136,7 @@ export const messages = {
   },
   validation: {
     titleRequired: "Donnez un titre à l'événement.",
+    textInvalid: "Retirez les caractères spéciaux invisibles.",
     titleTooLong: "Le titre ne peut pas dépasser 80 caractères.",
     locationTooLong: "Le lieu ne peut pas dépasser 120 caractères.",
     dateRequired: "Choisissez une date.",

@@ -37,6 +37,15 @@ describe("createEventSchema", () => {
     expect(result.location).toBeUndefined();
   });
 
+  it("rejects control characters in the title and the location", () => {
+    expect(errorMessages({ ...valid, title: "Padel\rEND:VEVENT" })).toContain(
+      messages.validation.textInvalid,
+    );
+    expect(errorMessages({ ...valid, location: "Club\u0000" })).toContain(
+      messages.validation.textInvalid,
+    );
+  });
+
   it("rejects an unknown timezone", () => {
     expect(errorMessages({ ...valid, timezone: "Mars/Olympus" })).toContain(
       messages.validation.timezoneInvalid,

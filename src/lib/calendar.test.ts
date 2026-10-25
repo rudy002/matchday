@@ -131,7 +131,41 @@ describe("buildIcs", () => {
       now,
     });
 
-    expect(escaped).toContain("SUMMARY:Padel\\, jeudi\; club\\\\ A\\nB");
+    expect(escaped).toContain("SUMMARY:Padel\\, jeudi\\; club\\\\ A\\nB");
+  });
+
+  it("treats a lone carriage return as a line break, not as a new line", () => {
+    const injected = buildIcs({
+      ...event,
+      title: "Padel\rEND:VEVENT\rBEGIN:VEVENT\rSUMMARY:Fake",
+      location: "Club\rATTENDEE:mailto:x@example.com",
+      slot: "2026-11-05T18:30",
+      eventUrl: "https://matchday.example/e/hKUXLQV2",
+      now,
+    });
+    const physicalLines = injected.split(/\r\n|\r|\n/);
+
+    expect(physicalLines.filter((line) => line === "END:VEVENT")).toHaveLength(
+      1,
+    );
+    expect(
+      physicalLines.filter((line) => line.startsWith("SUMMARY")),
+    ).toHaveLength(1);
+    expect(
+      physicalLines.filter((line) => line.startsWith("ATTENDEE")),
+    ).toHaveLength(0);
+  });
+
+  it("drops control characters other than the tab", () => {
+    const cleaned = buildIcs({
+      ...event,
+      title: "a\u0000b\u001Fc\u007Fd\te",
+      slot: "2026-11-05T18:30",
+      eventUrl: "https://matchday.example/e/hKUXLQV2",
+      now,
+    });
+
+    expect(cleaned).toContain("SUMMARY:abcd\te");
   });
 
   it("folds lines longer than 75 bytes without splitting accents", () => {

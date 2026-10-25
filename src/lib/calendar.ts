@@ -1,6 +1,7 @@
 import { fromZonedTime } from "date-fns-tz";
 
 import { messages } from "@/lib/messages";
+import { stripControlCharacters } from "@/lib/text";
 
 const MS_PER_MINUTE = 60_000;
 const ICS_LINE_LIMIT = 75;
@@ -52,11 +53,11 @@ export function buildGoogleCalendarUrl(event: CalendarEvent): string {
 }
 
 function escapeIcsText(value: string): string {
-  return value
+  const escaped = value
     .replace(/\\/g, "\\\\")
-    .replace(/;/g, "\;")
-    .replace(/,/g, "\\,")
-    .replace(/\r?\n/g, "\\n");
+    .replace(/[;,]/g, (match) => "\\" + match)
+    .replace(/\r\n|\r|\n/g, "\\n");
+  return stripControlCharacters(escaped);
 }
 
 function foldIcsLine(line: string): string {

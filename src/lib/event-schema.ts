@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { messages } from "@/lib/messages";
 import { SLOT_MINUTES, timeToMinutes } from "@/lib/slots";
+import { hasControlCharacters } from "@/lib/text";
 
 const DEFAULT_TIMEZONE = "Asia/Jerusalem";
 
@@ -46,11 +47,13 @@ export const createEventSchema = z
       .string()
       .trim()
       .min(1, validation.titleRequired)
-      .max(80, validation.titleTooLong),
+      .max(80, validation.titleTooLong)
+      .refine((value) => !hasControlCharacters(value), validation.textInvalid),
     location: z
       .string()
       .trim()
       .max(120, validation.locationTooLong)
+      .refine((value) => !hasControlCharacters(value), validation.textInvalid)
       .optional()
       .transform((value) => value || undefined),
     startDate: dateSchema,
