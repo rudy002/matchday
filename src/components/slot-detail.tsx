@@ -8,9 +8,10 @@ const { group: text } = messages;
 type SlotDetailProps = {
   slot: string | null;
   participants: ParticipantRecord[];
+  children?: React.ReactNode;
 };
 
-export function SlotDetail({ slot, participants }: SlotDetailProps) {
+export function SlotDetail({ slot, participants, children }: SlotDetailProps) {
   if (slot === null) {
     return <p className="text-sm text-muted-foreground">{text.pickSlot}</p>;
   }
@@ -32,6 +33,7 @@ export function SlotDetail({ slot, participants }: SlotDetailProps) {
           <span className="font-medium">{text.busy} :</span> {busy.join(", ")}
         </p>
       ) : null}
+      {children}
     </div>
   );
 }

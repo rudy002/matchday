@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { buildHeatmap, rankSlots, whoIsFree } from "@/lib/ranking";
+import {
+  buildHeatmap,
+  isValidStart,
+  rankSlots,
+  whoIsFree,
+} from "@/lib/ranking";
 import type { Participant } from "@/types/event";
 
 const slotKeys = [
@@ -150,5 +155,20 @@ describe("whoIsFree", () => {
       free: [],
       busy: ["Dana", "Avi", "Noa"],
     });
+  });
+});
+
+describe("isValidStart", () => {
+  it("accepts a start whose whole activity fits in the grid", () => {
+    expect(isValidStart(slotKeys, "2026-11-01T18:00", 60)).toBe(true);
+    expect(isValidStart(slotKeys, "2026-11-01T18:30", 60)).toBe(true);
+  });
+
+  it("rejects a start whose activity would run past the window", () => {
+    expect(isValidStart(slotKeys, "2026-11-01T19:00", 60)).toBe(false);
+  });
+
+  it("rejects a start that is not in the grid", () => {
+    expect(isValidStart(slotKeys, "2026-11-09T18:00", 30)).toBe(false);
   });
 });

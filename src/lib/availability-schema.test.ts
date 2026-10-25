@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { submitAvailabilitySchema } from "@/lib/availability-schema";
+import {
+  confirmSlotSchema,
+  submitAvailabilitySchema,
+} from "@/lib/availability-schema";
 
 const valid = {
   slug: "hKUXLQV2",
@@ -54,6 +57,33 @@ describe("submitAvailabilitySchema", () => {
   ])("rejects %s", (_label, override) => {
     expect(
       submitAvailabilitySchema.safeParse({ ...valid, ...override }).success,
+    ).toBe(false);
+  });
+});
+
+describe("confirmSlotSchema", () => {
+  const confirm = {
+    slug: "hKUXLQV2",
+    token: "a".repeat(32),
+    slot: "2026-11-05T18:30",
+  };
+
+  it("accepts a slot to confirm", () => {
+    expect(confirmSlotSchema.parse(confirm).slot).toBe("2026-11-05T18:30");
+  });
+
+  it("accepts null to cancel the confirmation", () => {
+    expect(confirmSlotSchema.parse({ ...confirm, slot: null }).slot).toBeNull();
+  });
+
+  it.each([
+    ["a short token", { token: "abc" }],
+    ["a malformed slug", { slug: "x" }],
+    ["a slot that is not on a half hour", { slot: "2026-11-05T18:10" }],
+    ["a missing slot", { slot: undefined }],
+  ])("rejects %s", (_label, override) => {
+    expect(
+      confirmSlotSchema.safeParse({ ...confirm, ...override }).success,
     ).toBe(false);
   });
 });

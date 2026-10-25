@@ -17,3 +17,9 @@ export const submitAvailabilitySchema = z.object({
     .max(MAX_SLOTS)
     .transform((slots) => [...new Set(slots)]),
 });
+
+export const confirmSlotSchema = z.object({
+  slug: z.string().regex(/^[0-9a-zA-Z]{8}$/),
+  token: z.string().regex(/^[0-9a-zA-Z]{32}$/),
+  slot: slotKeySchema.nullable(),
+});

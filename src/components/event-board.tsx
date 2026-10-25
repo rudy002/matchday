@@ -1,22 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 
+import { confirmSlotAction } from "@/app/actions/confirm-slot";
 import { AvailabilityForm } from "@/components/availability-form";
 import { AvailabilityGrid } from "@/components/availability-grid";
 import { BestSlots } from "@/components/best-slots";
+import { ConfirmedBanner } from "@/components/confirmed-banner";
 import { SlotDetail } from "@/components/slot-detail";
+import { Button } from "@/components/ui/button";
 import { WeekNav } from "@/components/week-nav";
 import type { EventRecord } from "@/lib/event-record";
+import { describeWindow } from "@/lib/format-dates";
 import { messages } from "@/lib/messages";
-import { buildHeatmap, rankSlots } from "@/lib/ranking";
+import { buildHeatmap, isValidStart, rankSlots } from "@/lib/ranking";
 import { generateSlotKeys, timeRows } from "@/lib/slots";
-import { useParticipants } from "@/lib/use-participants";
+import { useLiveEvent } from "@/lib/use-live-event";
 import { cn } from "@/lib/utils";
 import { buildWeeks, weekIndexOf } from "@/lib/weeks";
 import type { ParticipantRecord } from "@/types/event";
 
-const { group: text } = messages;
+const { group: text, confirm: confirmText } = messages;
 
 const BEST_SLOT_COUNT = 3;
 
@@ -25,11 +29,16 @@ type Mode = "mine" | "group";
 type EventBoardProps = {
   event: EventRecord;
   initialParticipants: ParticipantRecord[];
+  adminToken?: string;
 };
 
-export function EventBoard({ event, initialParticipants }: EventBoardProps) {
-  const { participants, refresh } = useParticipants(
-    event.id,
+export function EventBoard({
+  event,
+  initialParticipants,
+  adminToken,
+}: EventBoardProps) {
+  const { participants, confirmedSlot, refresh } = useLiveEvent(
+    event,
     initialParticipants,
   );
   const weeks = useMemo(
@@ -46,6 +55,8 @@ export function EventBoard({ event, initialParticipants }: EventBoardProps) {
   const [mode, setMode] = useState<Mode>("mine");
   const [weekIndex, setWeekIndex] = useState(0);
   const [focused, setFocused] = useState<string | null>(null);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
+  const [confirming, startConfirm] = useTransition();
 
   const counts = useMemo(
     () => buildHeatmap(slotKeys, participants),
@@ -67,10 +78,46 @@ export function EventBoard({ event, initialParticipants }: EventBoardProps) {
     setFocused(slotKey);
   }
 
+  function confirmSlot(slot: string | null) {
+    if (adminToken === undefined) return;
+    setConfirmError(null);
+    startConfirm(async () => {
+      const result = await confirmSlotAction({
+        slug: event.slug,
+        token: adminToken,
+        slot,
+      });
+      if (!result.ok) {
+        setConfirmError(result.message);
+        return;
+      }
+      await refresh();
+    });
+  }
+
   const respondents = participants.length;
+  const canConfirmFocused =
+    adminToken !== undefined &&
+    focused !== null &&
+    isValidStart(slotKeys, focused, event.durationMinutes);
 
   return (
     <div className="space-y-6">
+      {confirmedSlot ? (
+        <ConfirmedBanner
+          slot={confirmedSlot}
+          durationMinutes={event.durationMinutes}
+          pending={confirming}
+          onCancel={adminToken ? () => confirmSlot(null) : undefined}
+        />
+      ) : null}
+
+      {confirmError ? (
+        <p role="alert" className="text-sm text-destructive">
+          {confirmError}
+        </p>
+      ) : null}
+
       <div className="space-y-2">
         <div
           role="group"
@@ -112,6 +159,8 @@ export function EventBoard({ event, initialParticipants }: EventBoardProps) {
           respondents={respondents}
           onPick={pickSlot}
           onFill={() => setMode("mine")}
+          onConfirm={adminToken ? confirmSlot : undefined}
+          confirming={confirming}
         />
       ) : null}
 
@@ -141,7 +190,22 @@ export function EventBoard({ event, initialParticipants }: EventBoardProps) {
             }}
           />
           <p className="text-sm text-muted-foreground">{text.legend}</p>
-          <SlotDetail slot={focused} participants={participants} />
+          <SlotDetail slot={focused} participants={participants}>
+            {canConfirmFocused ? (
+              <div className="space-y-2 pt-1">
+                <p className="text-sm text-muted-foreground">
+                  {describeWindow(focused, event.durationMinutes)}
+                </p>
+                <Button
+                  type="button"
+                  disabled={confirming}
+                  onClick={() => confirmSlot(focused)}
+                >
+                  {confirming ? confirmText.confirming : confirmText.button}
+                </Button>
+              </div>
+            ) : null}
+          </SlotDetail>
         </section>
       ) : null}
     </div>

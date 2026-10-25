@@ -54,6 +54,14 @@ export const messages = {
     saveFailed: "Vos disponibilités n'ont pas pu être enregistrées. Réessayez.",
     loading: "Chargement de l'événement…",
   },
+  confirm: {
+    button: "Valider ce créneau",
+    confirming: "Validation…",
+    cancel: "Annuler la validation",
+    banner: "Créneau validé",
+    badAdminLink: "Ce lien d'organisateur n'est pas valide.",
+    failed: "Le créneau n'a pas pu être validé. Réessayez.",
+  },
   group: {
     tabsLabel: "Affichage",
     tabMine: "Mes dispos",
@@ -96,7 +104,7 @@ export const messages = {
   },
   created: {
     loading: "Chargement de l'événement…",
-    heading: "Votre événement est prêt",
+    heading: "Espace organisateur",
     shareLabel: "Lien à envoyer à vos amis",
     adminLabel: "Votre lien d'organisateur",
     adminHint:

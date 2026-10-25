@@ -84,3 +84,14 @@ export function whoIsFree(
   }
   return { free, busy };
 }
+
+export function isValidStart(
+  slotKeys: readonly SlotKey[],
+  start: SlotKey,
+  durationMinutes: number,
+): boolean {
+  return (
+    coveredSlots(start, slotsNeeded(durationMinutes), new Set(slotKeys)) !==
+    null
+  );
+}

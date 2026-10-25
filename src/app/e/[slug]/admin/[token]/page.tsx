@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { CopyLink } from "@/components/copy-link";
+import { EventBoard } from "@/components/event-board";
+import { EventHeader } from "@/components/event-header";
 import { WhatsAppShare } from "@/components/whatsapp-share";
 import { messages } from "@/lib/messages";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { fetchEvent, fetchParticipants } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = {
   title: messages.created.heading,
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
 const SLUG_PATTERN = /^[0-9a-zA-Z]{8}$/;
 const TOKEN_PATTERN = /^[0-9a-zA-Z]{32}$/;
 
-async function CreatedEvent({
+async function OrganizerContent({
   params,
 }: {
   params: PageProps<"/e/[slug]/admin/[token]">["params"];
@@ -24,34 +26,26 @@ async function CreatedEvent({
   const { slug, token } = await params;
   if (!SLUG_PATTERN.test(slug) || !TOKEN_PATTERN.test(token)) notFound();
 
-  const { data: event } = await createSupabaseServerClient()
-    .from("events")
-    .select("title")
-    .eq("slug", slug)
-    .maybeSingle();
+  const [event, participants] = await Promise.all([
+    fetchEvent(slug),
+    fetchParticipants(slug),
+  ]);
   if (!event) notFound();
 
   const sharePath = `/e/${slug}`;
 
   return (
     <>
-      <header className="space-y-2">
-        <h1 className="text-3xl font-extrabold sm:text-4xl">
-          {messages.created.heading}
-        </h1>
-        <p className="text-lg text-muted-foreground">{event.title}</p>
-      </header>
+      <EventHeader event={event} />
 
       <section className="space-y-4">
+        <h2 className="text-xl font-bold">{messages.created.heading}</h2>
         <CopyLink
           id="share-link"
           label={messages.created.shareLabel}
           path={sharePath}
         />
         <WhatsAppShare title={event.title} path={sharePath} />
-      </section>
-
-      <section>
         <CopyLink
           id="admin-link"
           label={messages.created.adminLabel}
@@ -59,21 +53,27 @@ async function CreatedEvent({
           hint={messages.created.adminHint}
         />
       </section>
+
+      <EventBoard
+        event={event}
+        initialParticipants={participants}
+        adminToken={token}
+      />
     </>
   );
 }
 
-export default function CreatedEventPage({
+export default function OrganizerPage({
   params,
 }: PageProps<"/e/[slug]/admin/[token]">) {
   return (
-    <main className="mx-auto w-full max-w-xl space-y-8 px-4 pt-4 pb-16">
+    <main className="mx-auto w-full max-w-xl space-y-8 px-4 pt-4 pb-0">
       <Suspense
         fallback={
           <p className="text-muted-foreground">{messages.created.loading}</p>
         }
       >
-        <CreatedEvent params={params} />
+        <OrganizerContent params={params} />
       </Suspense>
     </main>
   );
