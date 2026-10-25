@@ -72,3 +72,15 @@ export function rankSlots({
   ranked.sort((a, b) => b.count - a.count || a.start.localeCompare(b.start));
   return limit === undefined ? ranked : ranked.slice(0, limit);
 }
+
+export function whoIsFree(
+  slot: SlotKey,
+  participants: readonly Participant[],
+): { free: string[]; busy: string[] } {
+  const free: string[] = [];
+  const busy: string[] = [];
+  for (const { name, availability } of participants) {
+    (availability.includes(slot) ? free : busy).push(name);
+  }
+  return { free, busy };
+}

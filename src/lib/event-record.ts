@@ -1,4 +1,5 @@
 export type EventRow = {
+  id: string;
   slug: string;
   title: string;
   location: string | null;
@@ -12,6 +13,7 @@ export type EventRow = {
 };
 
 export type EventRecord = {
+  id: string;
   slug: string;
   title: string;
   location: string | undefined;
@@ -25,7 +27,7 @@ export type EventRecord = {
 };
 
 export const EVENT_COLUMNS =
-  "slug, title, location, start_date, end_date, start_time, end_time, duration_minutes, timezone, confirmed_slot";
+  "id, slug, title, location, start_date, end_date, start_time, end_time, duration_minutes, timezone, confirmed_slot";
 
 function withoutSeconds(time: string): string {
   return time.slice(0, 5);
@@ -33,6 +35,7 @@ function withoutSeconds(time: string): string {
 
 export function parseEventRow(row: EventRow): EventRecord {
   return {
+    id: row.id,
     slug: row.slug,
     title: row.title,
     location: row.location ?? undefined,

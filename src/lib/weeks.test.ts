@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildWeeks } from "@/lib/weeks";
+import { buildWeeks, weekIndexOf } from "@/lib/weeks";
 
 describe("buildWeeks", () => {
   it("returns one Sunday-to-Saturday week for a full week", () => {
@@ -56,5 +56,19 @@ describe("buildWeeks", () => {
         "2027-01-02",
       ],
     ]);
+  });
+});
+
+describe("weekIndexOf", () => {
+  const weeks = buildWeeks("2026-11-04", "2026-11-17");
+
+  it("finds the week that contains a date", () => {
+    expect(weekIndexOf(weeks, "2026-11-04")).toBe(0);
+    expect(weekIndexOf(weeks, "2026-11-08")).toBe(1);
+    expect(weekIndexOf(weeks, "2026-11-17")).toBe(2);
+  });
+
+  it("falls back to the first week for an unknown date", () => {
+    expect(weekIndexOf(weeks, "2030-01-01")).toBe(0);
   });
 });

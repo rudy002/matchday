@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 import { submitAvailabilityAction } from "@/app/actions/submit-availability";
@@ -10,12 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { participantNameSchema } from "@/lib/event-schema";
 import type { EventRecord } from "@/lib/event-record";
-import { weekLabel } from "@/lib/format-dates";
 import { createToken } from "@/lib/ids";
 import { messages } from "@/lib/messages";
-import { generateSlotKeys, timeRows } from "@/lib/slots";
 import { rememberIdentity, useIdentity } from "@/lib/use-identity";
-import { buildWeeks } from "@/lib/weeks";
+import type { Week } from "@/lib/weeks";
 import type { ParticipantRecord } from "@/types/event";
 
 const { availability: text } = messages;
@@ -26,24 +23,21 @@ type Status =
 type AvailabilityFormProps = {
   event: EventRecord;
   participants: ParticipantRecord[];
+  week: Week;
+  rows: readonly string[];
+  gridKeys: ReadonlySet<string>;
+  onSaved: () => void;
 };
 
 export function AvailabilityForm({
   event,
   participants,
+  week,
+  rows,
+  gridKeys,
+  onSaved,
 }: AvailabilityFormProps) {
   const identity = useIdentity(event.slug);
-  const weeks = useMemo(
-    () => buildWeeks(event.startDate, event.endDate),
-    [event.startDate, event.endDate],
-  );
-  const rows = useMemo(
-    () => timeRows(event.startTime, event.endTime),
-    [event.startTime, event.endTime],
-  );
-  const gridKeys = useMemo(() => new Set(generateSlotKeys(event)), [event]);
-
-  const [weekIndex, setWeekIndex] = useState(0);
   const [draftName, setDraftName] = useState<string | null>(null);
   const [draftSlots, setDraftSlots] = useState<ReadonlySet<string> | null>(
     null,
@@ -100,10 +94,9 @@ export function AvailabilityForm({
         name: parsedName.data,
       });
       setStatus({ kind: "saved" });
+      onSaved();
     });
   }
-
-  const week = weeks[weekIndex];
 
   return (
     <div className="space-y-6">
@@ -132,32 +125,6 @@ export function AvailabilityForm({
 
       <section className="space-y-3">
         <p className="text-sm text-muted-foreground">{text.hint}</p>
-
-        {weeks.length > 1 ? (
-          <div className="flex items-center justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              aria-label={text.previousWeek}
-              disabled={weekIndex === 0}
-              onClick={() => setWeekIndex(weekIndex - 1)}
-            >
-              <ChevronLeft />
-            </Button>
-            <p className="font-heading font-bold">{weekLabel(week)}</p>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              aria-label={text.nextWeek}
-              disabled={weekIndex === weeks.length - 1}
-              onClick={() => setWeekIndex(weekIndex + 1)}
-            >
-              <ChevronRight />
-            </Button>
-          </div>
-        ) : null}
 
         <AvailabilityGrid
           week={week}

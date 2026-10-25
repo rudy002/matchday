@@ -7,13 +7,21 @@ import { messages } from "@/lib/messages";
 import { cn } from "@/lib/utils";
 import type { Week } from "@/lib/weeks";
 
-const { availability: text, calendar } = messages;
+const { availability: text, calendar, group } = messages;
+
+type Heat = {
+  counts: Readonly<Record<string, number>>;
+  total: number;
+  focused: string | null;
+  onFocus: (slotKey: string) => void;
+};
 
 type AvailabilityGridProps = {
   week: Week;
   rows: readonly string[];
-  selected: ReadonlySet<string>;
-  onPaint: (slotKeys: string[], on: boolean) => void;
+  selected?: ReadonlySet<string>;
+  onPaint?: (slotKeys: string[], on: boolean) => void;
+  heat?: Heat;
 };
 
 function slotKeyOf(target: EventTarget): string | null {
@@ -23,11 +31,14 @@ function slotKeyOf(target: EventTarget): string | null {
   );
 }
 
+const NO_SLOTS: ReadonlySet<string> = new Set();
+
 export function AvailabilityGrid({
   week,
   rows,
-  selected,
-  onPaint,
+  selected = NO_SLOTS,
+  onPaint = () => {},
+  heat,
 }: AvailabilityGridProps) {
   const painting = useRef<boolean | null>(null);
   const lastPointerType = useRef("");
@@ -47,7 +58,7 @@ export function AvailabilityGrid({
   function handlePointerDown(event: React.PointerEvent) {
     lastPointerType.current = event.pointerType;
     const key = slotKeyOf(event.target);
-    if (event.pointerType !== "mouse" || key === null) return;
+    if (heat || event.pointerType !== "mouse" || key === null) return;
 
     painting.current = !selected.has(key);
     onPaint([key], painting.current);
@@ -63,12 +74,17 @@ export function AvailabilityGrid({
   function handleClick(event: React.MouseEvent) {
     const key = slotKeyOf(event.target);
     if (key === null) return;
+    if (heat) {
+      heat.onFocus(key);
+      return;
+    }
     // A mouse press was already handled on pointerdown; keyboard clicks have detail 0.
     if (lastPointerType.current === "mouse" && event.detail > 0) return;
     onPaint([key], !selected.has(key));
   }
 
   function toggleDay(date: string) {
+    if (heat) return;
     const keys = rows.map((time) => `${date}T${time}`);
     onPaint(keys, !keys.every((key) => selected.has(key)));
   }
@@ -82,24 +98,37 @@ export function AvailabilityGrid({
       onClick={handleClick}
     >
       <div />
-      {week.map((date, index) =>
-        date ? (
-          <button
-            key={date}
-            type="button"
-            aria-label={`${text.toggleDay} : ${calendar.daysLong[index]} ${formatDay(date)}`}
-            className="flex flex-col items-center rounded-md py-1 text-xs leading-tight font-medium hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-            onClick={() => toggleDay(date)}
-          >
+      {week.map((date, index) => {
+        if (!date) return <div key={`empty-${index}`} />;
+        const label = (
+          <>
             <span>{calendar.daysShort[index]}</span>
             <span className="text-muted-foreground">
               {Number(date.slice(8))}
             </span>
-          </button>
+          </>
+        );
+        const headerClass =
+          "flex flex-col items-center rounded-md py-1 text-xs leading-tight font-medium";
+        return heat ? (
+          <div key={date} className={headerClass}>
+            {label}
+          </div>
         ) : (
-          <div key={`empty-${index}`} />
-        ),
-      )}
+          <button
+            key={date}
+            type="button"
+            aria-label={`${text.toggleDay} : ${calendar.daysLong[index]} ${formatDay(date)}`}
+            className={cn(
+              headerClass,
+              "hover:bg-accent focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+            )}
+            onClick={() => toggleDay(date)}
+          >
+            {label}
+          </button>
+        );
+      })}
 
       {rows.map((time) => (
         <Fragment key={time}>
@@ -109,6 +138,32 @@ export function AvailabilityGrid({
           {week.map((date, index) => {
             if (!date) return <div key={`empty-${index}`} />;
             const key = `${date}T${time}`;
+
+            if (heat) {
+              const count = heat.counts[key] ?? 0;
+              const share = heat.total === 0 ? 0 : count / heat.total;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  data-slot-key={key}
+                  aria-label={`${describeSlot(key)} : ${count} ${group.of} ${heat.total} ${group.freeOf}`}
+                  style={{
+                    backgroundColor: `color-mix(in oklab, var(--primary) ${Math.round(share * 100)}%, var(--muted))`,
+                  }}
+                  className={cn(
+                    "h-9 rounded-md text-xs font-bold tabular-nums transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+                    share >= 0.5
+                      ? "text-primary-foreground"
+                      : "text-foreground",
+                    heat.focused === key && "ring-2 ring-foreground",
+                  )}
+                >
+                  {count > 0 ? count : null}
+                </button>
+              );
+            }
+
             const on = selected.has(key);
             return (
               <button

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { Suspense } from "react";
 
-import { AvailabilityForm } from "@/components/availability-form";
+import { EventBoard } from "@/components/event-board";
 import { formatDuration } from "@/lib/event-form";
 import { formatDay } from "@/lib/format-dates";
 import { messages } from "@/lib/messages";
@@ -52,7 +52,7 @@ async function EventContent({
           ) : null}
         </ul>
       </header>
-      <AvailabilityForm event={event} participants={participants} />
+      <EventBoard event={event} initialParticipants={participants} />
     </>
   );
 }

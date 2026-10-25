@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildHeatmap, rankSlots } from "@/lib/ranking";
+import { buildHeatmap, rankSlots, whoIsFree } from "@/lib/ranking";
 import type { Participant } from "@/types/event";
 
 const slotKeys = [
@@ -130,5 +130,25 @@ describe("rankSlots", () => {
     expect(
       rankSlots({ slotKeys, participants: [], durationMinutes: 30 }),
     ).toEqual([]);
+  });
+});
+
+describe("whoIsFree", () => {
+  it("splits participants into free and not free on a slot", () => {
+    expect(whoIsFree("2026-11-01T18:30", people)).toEqual({
+      free: ["Dana", "Avi", "Noa"],
+      busy: [],
+    });
+    expect(whoIsFree("2026-11-01T18:00", people)).toEqual({
+      free: ["Dana"],
+      busy: ["Avi", "Noa"],
+    });
+  });
+
+  it("puts everyone in busy when nobody is free", () => {
+    expect(whoIsFree("2026-11-02T18:30", people)).toEqual({
+      free: [],
+      busy: ["Dana", "Avi", "Noa"],
+    });
   });
 });

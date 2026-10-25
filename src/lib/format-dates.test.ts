@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { describeSlot, formatDay, weekLabel } from "@/lib/format-dates";
+import {
+  describeSlot,
+  describeWindow,
+  formatDay,
+  weekLabel,
+} from "@/lib/format-dates";
 
 describe("formatDay", () => {
   it("writes the day number and the short month", () => {
@@ -66,5 +71,19 @@ describe("describeSlot", () => {
   it("gives the weekday, date and time for screen readers", () => {
     expect(describeSlot("2026-11-01T18:30")).toBe("Dimanche 1 nov. 18:30");
     expect(describeSlot("2026-11-04T09:00")).toBe("Mercredi 4 nov. 09:00");
+  });
+});
+
+describe("describeWindow", () => {
+  it("writes the day with the start and end of the activity", () => {
+    expect(describeWindow("2026-11-05T18:00", 90)).toBe(
+      "Jeudi 5 nov., 18:00 – 19:30",
+    );
+  });
+
+  it("handles an activity that ends on the hour", () => {
+    expect(describeWindow("2026-11-01T09:30", 30)).toBe(
+      "Dimanche 1 nov., 09:30 – 10:00",
+    );
   });
 });

@@ -23,3 +23,10 @@ export function buildWeeks(startDate: string, endDate: string): Week[] {
 
   return weeks;
 }
+
+export function weekIndexOf(weeks: readonly Week[], date: string): number {
+  return Math.max(
+    0,
+    weeks.findIndex((week) => week.includes(date)),
+  );
+}

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { parseEventRow } from "@/lib/event-record";
 
 const row = {
+  id: "7c0e1a52-0000-4000-8000-000000000000",
   slug: "hKUXLQV2",
   title: "Padel jeudi",
   location: null,
@@ -18,6 +19,7 @@ const row = {
 describe("parseEventRow", () => {
   it("maps database columns to camelCase and trims seconds from times", () => {
     expect(parseEventRow(row)).toEqual({
+      id: "7c0e1a52-0000-4000-8000-000000000000",
       slug: "hKUXLQV2",
       title: "Padel jeudi",
       location: undefined,

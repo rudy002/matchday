@@ -1,6 +1,7 @@
 import { getDay, parseISO } from "date-fns";
 
 import { messages } from "@/lib/messages";
+import { minutesToTime, timeToMinutes } from "@/lib/slots";
 import type { Week } from "@/lib/weeks";
 
 const { calendar } = messages;
@@ -33,4 +34,14 @@ export function describeSlot(slotKey: string): string {
   const [date, time] = slotKey.split("T");
   const weekday = calendar.daysLong[getDay(parseISO(date))];
   return `${weekday} ${formatDay(date)} ${time}`;
+}
+
+export function describeWindow(
+  startKey: string,
+  durationMinutes: number,
+): string {
+  const [date, time] = startKey.split("T");
+  const weekday = calendar.daysLong[getDay(parseISO(date))];
+  const end = minutesToTime(timeToMinutes(time) + durationMinutes);
+  return `${weekday} ${formatDay(date)}, ${time} – ${end}`;
 }
