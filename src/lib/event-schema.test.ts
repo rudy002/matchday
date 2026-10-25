@@ -58,6 +58,12 @@ describe("createEventSchema", () => {
     );
   });
 
+  it("asks for a date when the field is empty", () => {
+    expect(errorMessages({ ...valid, startDate: "" })).toEqual([
+      messages.validation.dateRequired,
+    ]);
+  });
+
   it("rejects an end date before the start date", () => {
     expect(
       errorMessages({

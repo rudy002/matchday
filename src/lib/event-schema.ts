@@ -25,7 +25,10 @@ function isKnownTimezone(value: string): boolean {
   }
 }
 
-const dateSchema = z.string().refine(isRealDate, validation.dateInvalid);
+const dateSchema = z
+  .string()
+  .min(1, { error: validation.dateRequired, abort: true })
+  .refine(isRealDate, validation.dateInvalid);
 
 const timeSchema = z
   .string()
@@ -55,7 +58,7 @@ export const createEventSchema = z
     startTime: timeSchema,
     endTime: timeSchema,
     durationMinutes: z
-      .number()
+      .number({ error: validation.durationInvalid })
       .int(validation.durationInvalid)
       .min(MIN_DURATION_MINUTES, validation.durationInvalid)
       .max(MAX_DURATION_MINUTES, validation.durationInvalid)

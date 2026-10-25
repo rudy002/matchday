@@ -11,3 +11,9 @@ export type RankedSlot = {
   total: number;
   names: string[];
 };
+
+export type CreateEventState = {
+  fieldErrors?: Partial<Record<string, string>>;
+  message?: string;
+  values?: Record<string, string>;
+};
