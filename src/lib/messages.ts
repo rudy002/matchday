@@ -54,6 +54,10 @@ export const messages = {
     saveFailed: "Vos disponibilités n'ont pas pu être enregistrées. Réessayez.",
     loading: "Chargement de l'événement…",
   },
+  share: {
+    prompt: "Indiquez vos créneaux libres.",
+    imageAlt: "Aperçu de l'événement Matchday",
+  },
   agenda: {
     google: "Ajouter à Google Agenda",
     ics: "Télécharger le fichier .ics",

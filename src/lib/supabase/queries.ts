@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import {
   EVENT_COLUMNS,
   parseEventRow,
@@ -7,7 +9,9 @@ import {
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ParticipantRecord } from "@/types/event";
 
-export async function fetchEvent(slug: string): Promise<EventRecord | null> {
+export const fetchEvent = cache(async function fetchEvent(
+  slug: string,
+): Promise<EventRecord | null> {
   const { data, error } = await createSupabaseServerClient()
     .from("events")
     .select(EVENT_COLUMNS)
@@ -16,7 +20,7 @@ export async function fetchEvent(slug: string): Promise<EventRecord | null> {
 
   if (error) throw new Error(`Could not load event: ${error.message}`);
   return data ? parseEventRow(data) : null;
-}
+});
 
 export async function fetchParticipants(
   slug: string,

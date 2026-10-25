@@ -5,13 +5,31 @@ import { Suspense } from "react";
 import { EventBoard } from "@/components/event-board";
 import { EventHeader } from "@/components/event-header";
 import { messages } from "@/lib/messages";
+import { shareDescription } from "@/lib/share-meta";
 import { fetchEvent, fetchParticipants } from "@/lib/supabase/queries";
 
-export const metadata: Metadata = {
-  title: messages.app.name,
-};
-
 const SLUG_PATTERN = /^[0-9a-zA-Z]{8}$/;
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/e/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const event = SLUG_PATTERN.test(slug) ? await fetchEvent(slug) : null;
+  if (!event) return { title: messages.errors.notFoundTitle };
+
+  const description = shareDescription(event);
+  return {
+    title: event.title,
+    description,
+    openGraph: {
+      title: event.title,
+      description,
+      siteName: messages.app.name,
+      locale: "fr_FR",
+      type: "website",
+    },
+  };
+}
 
 async function EventContent({
   params,
