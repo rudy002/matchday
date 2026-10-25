@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { generateSlotKeys, slotsNeeded } from "@/lib/slots";
+import { generateSlotKeys, slotsNeeded, timeRows } from "@/lib/slots";
 
 describe("generateSlotKeys", () => {
   it("steps by 30 minutes and excludes the end time", () => {
@@ -68,5 +68,20 @@ describe("slotsNeeded", () => {
     [45, 2],
   ])("%i minutes need %i slots", (minutes, expected) => {
     expect(slotsNeeded(minutes)).toBe(expected);
+  });
+});
+
+describe("timeRows", () => {
+  it("lists each half hour from the start, excluding the end", () => {
+    expect(timeRows("18:00", "20:00")).toEqual([
+      "18:00",
+      "18:30",
+      "19:00",
+      "19:30",
+    ]);
+  });
+
+  it("returns nothing for an empty window", () => {
+    expect(timeRows("20:00", "20:00")).toEqual([]);
   });
 });

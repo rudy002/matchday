@@ -17,3 +17,9 @@ export type CreateEventState = {
   message?: string;
   values?: Record<string, string>;
 };
+
+export type ParticipantRecord = {
+  id: string;
+  name: string;
+  availability: SlotKey[];
+};

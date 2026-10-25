@@ -35,9 +35,21 @@ export function shiftSlotKey(key: SlotKey, minutes: number): SlotKey | null {
   return `${date}T${minutesToTime(shifted)}`;
 }
 
+export function timeRows(startTime: string, endTime: string): string[] {
+  const end = timeToMinutes(endTime);
+  const rows: string[] = [];
+  for (
+    let minutes = timeToMinutes(startTime);
+    minutes < end;
+    minutes += SLOT_MINUTES
+  ) {
+    rows.push(minutesToTime(minutes));
+  }
+  return rows;
+}
+
 export function generateSlotKeys(grid: SlotGrid): SlotKey[] {
-  const first = timeToMinutes(grid.startTime);
-  const end = timeToMinutes(grid.endTime);
+  const times = timeRows(grid.startTime, grid.endTime);
   const keys: SlotKey[] = [];
 
   for (
@@ -46,9 +58,7 @@ export function generateSlotKeys(grid: SlotGrid): SlotKey[] {
     day = addDays(day, 1)
   ) {
     const date = format(day, "yyyy-MM-dd");
-    for (let minutes = first; minutes < end; minutes += SLOT_MINUTES) {
-      keys.push(`${date}T${minutesToTime(minutes)}`);
-    }
+    for (const time of times) keys.push(`${date}T${time}`);
   }
 
   return keys;
