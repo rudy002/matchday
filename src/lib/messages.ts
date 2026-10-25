@@ -54,6 +54,13 @@ export const messages = {
     saveFailed: "Vos disponibilités n'ont pas pu être enregistrées. Réessayez.",
     loading: "Chargement de l'événement…",
   },
+  agenda: {
+    google: "Ajouter à Google Agenda",
+    ics: "Télécharger le fichier .ics",
+    icsHint: "Pour Apple Agenda et Outlook",
+    details: "Créneau choisi avec Matchday :",
+    notConfirmed: "Aucun créneau n'a encore été validé pour cet événement.",
+  },
   confirm: {
     button: "Valider ce créneau",
     confirming: "Validation…",

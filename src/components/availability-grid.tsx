@@ -91,7 +91,7 @@ export function AvailabilityGrid({
 
   return (
     <div
-      className="grid touch-manipulation gap-[3px] select-none"
+      className="grid touch-manipulation gap-0.75 select-none"
       style={{ gridTemplateColumns: "3rem repeat(7, minmax(0, 1fr))" }}
       onPointerDown={handlePointerDown}
       onPointerOver={handlePointerOver}

@@ -105,8 +105,8 @@ export function EventBoard({
     <div className="space-y-6">
       {confirmedSlot ? (
         <ConfirmedBanner
+          event={event}
           slot={confirmedSlot}
-          durationMinutes={event.durationMinutes}
           pending={confirming}
           onCancel={adminToken ? () => confirmSlot(null) : undefined}
         />
