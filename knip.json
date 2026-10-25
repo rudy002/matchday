@@ -1,4 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": ["src/lib/supabase/{client,server}.ts"],
   "ignore": ["src/components/ui/**"]
 }
