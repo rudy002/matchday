@@ -1,0 +1,9 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "ignore": ["src/components/ui/**"],
+  "ignoreDependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
+    "lucide-react"
+  ]
+}
