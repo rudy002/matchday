@@ -8,7 +8,7 @@ import { heatPattern } from "@/lib/share-meta";
 
 export const SHARE_IMAGE_SIZE = { width: 1200, height: 630 };
 
-const COLORS = {
+export const COLORS = {
   paper: "#f2f7f9",
   ink: "#0e1b27",
   muted: "#586a76",
@@ -33,6 +33,21 @@ const [fontBold, fontMedium] = await Promise.all([
     ),
   ),
 ]);
+
+export const SHARE_FONTS = [
+  {
+    name: "Bricolage",
+    data: fontBold,
+    weight: 800 as const,
+    style: "normal" as const,
+  },
+  {
+    name: "Bricolage",
+    data: fontMedium,
+    weight: 500 as const,
+    style: "normal" as const,
+  },
+];
 
 function titleSize(title: string): number {
   if (title.length <= 24) return 84;
@@ -135,10 +150,7 @@ export function renderShareImage({ title, details, seed }: ShareImageInput) {
     </div>,
     {
       ...SHARE_IMAGE_SIZE,
-      fonts: [
-        { name: "Bricolage", data: fontBold, weight: 800, style: "normal" },
-        { name: "Bricolage", data: fontMedium, weight: 500, style: "normal" },
-      ],
+      fonts: SHARE_FONTS,
     },
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { messages } from "@/lib/messages";
+import { useCopy } from "@/lib/use-copy";
 import { useOrigin } from "@/lib/use-origin";
 
 type CopyLinkProps = {
@@ -16,22 +16,10 @@ type CopyLinkProps = {
   hint?: string;
 };
 
-type CopyStatus = "idle" | "copied" | "failed";
-
 export function CopyLink({ id, label, path, hint }: CopyLinkProps) {
   const origin = useOrigin();
-  const [status, setStatus] = useState<CopyStatus>("idle");
+  const { status, copy } = useCopy();
   const url = `${origin}${path}`;
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setStatus("copied");
-      setTimeout(() => setStatus("idle"), 2000);
-    } catch {
-      setStatus("failed");
-    }
-  }
 
   return (
     <div className="space-y-2">
@@ -48,7 +36,7 @@ export function CopyLink({ id, label, path, hint }: CopyLinkProps) {
           type="button"
           variant="outline"
           className="h-11 shrink-0 px-4 text-base"
-          onClick={copy}
+          onClick={() => copy(url)}
         >
           {status === "copied" ? <Check /> : <Copy />}
           {status === "copied"

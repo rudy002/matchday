@@ -36,12 +36,20 @@ export function describeSlot(slotKey: string): string {
   return `${weekday} ${formatDay(date)} ${time}`;
 }
 
+export function windowParts(
+  startKey: string,
+  durationMinutes: number,
+): { day: string; time: string } {
+  const [date, time] = startKey.split("T");
+  const weekday = calendar.daysLong[getDay(parseISO(date))];
+  const end = minutesToTime(timeToMinutes(time) + durationMinutes);
+  return { day: `${weekday} ${formatDay(date)}`, time: `${time} – ${end}` };
+}
+
 export function describeWindow(
   startKey: string,
   durationMinutes: number,
 ): string {
-  const [date, time] = startKey.split("T");
-  const weekday = calendar.daysLong[getDay(parseISO(date))];
-  const end = minutesToTime(timeToMinutes(time) + durationMinutes);
-  return `${weekday} ${formatDay(date)}, ${time} – ${end}`;
+  const { day, time } = windowParts(startKey, durationMinutes);
+  return `${day}, ${time}`;
 }

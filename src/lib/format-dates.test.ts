@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   describeSlot,
   describeWindow,
+  windowParts,
   formatDay,
   weekLabel,
 } from "@/lib/format-dates";
@@ -85,5 +86,14 @@ describe("describeWindow", () => {
     expect(describeWindow("2026-11-01T09:30", 30)).toBe(
       "Dimanche 1 nov., 09:30 – 10:00",
     );
+  });
+});
+
+describe("windowParts", () => {
+  it("splits the day from the time range", () => {
+    expect(windowParts("2026-11-11T18:30", 90)).toEqual({
+      day: "Mercredi 11 nov.",
+      time: "18:30 – 20:00",
+    });
   });
 });

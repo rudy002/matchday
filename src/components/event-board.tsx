@@ -7,13 +7,15 @@ import { AvailabilityForm } from "@/components/availability-form";
 import { AvailabilityGrid } from "@/components/availability-grid";
 import { BestSlots } from "@/components/best-slots";
 import { ConfirmedBanner } from "@/components/confirmed-banner";
+import { ResultsShare } from "@/components/results-share";
 import { SlotDetail } from "@/components/slot-detail";
 import { Button } from "@/components/ui/button";
 import { WeekNav } from "@/components/week-nav";
 import type { EventRecord } from "@/lib/event-record";
 import { describeWindow } from "@/lib/format-dates";
 import { messages } from "@/lib/messages";
-import { buildHeatmap, isValidStart, rankSlots } from "@/lib/ranking";
+import { buildHeatmap, isValidStart } from "@/lib/ranking";
+import { summarizeResults } from "@/lib/results";
 import { generateSlotKeys, timeRows } from "@/lib/slots";
 import { useLiveEvent } from "@/lib/use-live-event";
 import { cn } from "@/lib/utils";
@@ -21,8 +23,6 @@ import { buildWeeks, weekIndexOf } from "@/lib/weeks";
 import type { ParticipantRecord } from "@/types/event";
 
 const { group: text, confirm: confirmText } = messages;
-
-const BEST_SLOT_COUNT = 3;
 
 type Mode = "mine" | "group";
 
@@ -62,15 +62,9 @@ export function EventBoard({
     () => buildHeatmap(slotKeys, participants),
     [slotKeys, participants],
   );
-  const best = useMemo(
-    () =>
-      rankSlots({
-        slotKeys,
-        participants,
-        durationMinutes: event.durationMinutes,
-        limit: BEST_SLOT_COUNT,
-      }),
-    [slotKeys, participants, event.durationMinutes],
+  const summary = useMemo(
+    () => summarizeResults({ event, participants, confirmedSlot }),
+    [event, participants, confirmedSlot],
   );
 
   function pickSlot(slotKey: string) {
@@ -154,7 +148,7 @@ export function EventBoard({
 
       {mode === "group" ? (
         <BestSlots
-          slots={best}
+          slots={summary.best}
           durationMinutes={event.durationMinutes}
           respondents={respondents}
           onPick={pickSlot}
@@ -207,6 +201,10 @@ export function EventBoard({
             ) : null}
           </SlotDetail>
         </section>
+      ) : null}
+
+      {mode === "group" ? (
+        <ResultsShare event={event} summary={summary} />
       ) : null}
     </div>
   );
